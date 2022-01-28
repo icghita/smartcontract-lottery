@@ -1,5 +1,5 @@
 from brownie import Lottery, accounts, config, network, exceptions
-from scripts.deploy_lottery import deploy_lottery
+from scripts.deploy_lottery import deploy_lottery, end_lottery
 from web3 import Web3
 import pytest
 from scripts.helpful_scripts import (
@@ -28,6 +28,15 @@ def test_cant_enter_unless_started():
     #act/assert
     with pytest.raises(exceptions.VirtualMachineError):
         lottery.enter({"from": get_account(), "value": lottery.getEntranceFee()})
+        
+def test_can_end_lottery():
+    #arrange
+    lottery = deploy_lottery()
+    account = get_account()
+    lottery.startLottery({"from": account}), 
+    lottery.enter({"from": account, "value": lottery.getEntranceFee()})
+    assert end_lottery()
+    
     
 def test_can_pick_winner():
     #arrange
